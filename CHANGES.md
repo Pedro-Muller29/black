@@ -29,6 +29,9 @@
   instead. This fixes the awkward break that was showing up in comprehension `if`
   clauses (#4514) as well as the same shape inside `if`, `elif`, `assert`, and
   parenthesized expressions (#5135)
+- Wrap a long single `and`/`or` in optional parentheses instead of splitting inside a
+  call's argument list. Set, dict, and list literals on the right-hand side keep the
+  inline split, since those collections naturally expand (#5153)
 
 ### Configuration
 

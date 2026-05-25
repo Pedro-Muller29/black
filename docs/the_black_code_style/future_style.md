@@ -34,6 +34,10 @@ Currently, the following features are included in the preview style:
 - `hug_comparator`: Don't break a comparator (`not in`, `==`, `is`, ...) away from its
   left operand when the right operand is a bracketed expression that has to break
   anyway; let the bracket explode instead. ([see below](labels/hug-comparator))
+- `wrap_long_bool_in_parens`: For a long line whose top-level structure is a single
+  `and`/`or`, wrap the whole expression in optional parens instead of splitting inside a
+  call argument list on one side of the operator.
+  ([see below](labels/wrap-long-bool-in-parens))
 
 (labels/wrap-comprehension-in)=
 
@@ -315,6 +319,54 @@ assert (
     ).get_return_type()
 )
 ```
+
+(labels/wrap-long-bool-in-parens)=
+
+### Wrap long boolean expressions in optional parentheses
+
+When a line is too long and its top-level structure is a single `and`/`or`, Black used
+to split inside one of the operands. With a function call on either side that meant the
+split landed in an argument list, hiding the logical structure of the condition:
+
+```python
+# Before
+
+if not is_node_in_type_annotation_context(node) and isinstance(
+    node.parent, astroid.Subscript
+):
+    pass
+
+
+def _supports_mapping_protocol(value):
+    return _supports_protocol_method(
+        value, GETITEM_METHOD
+    ) and _supports_protocol_method(value, KEYS_METHOD)
+```
+
+With this feature enabled, Black wraps the whole expression in optional parentheses and
+splits on the boolean operator:
+
+```python
+# After (with --preview)
+
+if (
+    not is_node_in_type_annotation_context(node)
+    and isinstance(node.parent, astroid.Subscript)
+):
+    pass
+
+
+def _supports_mapping_protocol(value):
+    return (
+        _supports_protocol_method(value, GETITEM_METHOD)
+        and _supports_protocol_method(value, KEYS_METHOD)
+    )
+```
+
+This only kicks in when the alternative is to split inside a function call or subscript.
+Set, dict, and list literals on the right-hand side keep the inline split, since those
+collections naturally expand and wrapping just adds an indent level. Expressions with
+more than one top-level `and`/`or` were already wrapped this way before the change.
 
 ## Unstable style
 

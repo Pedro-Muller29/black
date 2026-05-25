@@ -1159,8 +1159,9 @@ class BaseStringSplitter(StringTransformer):
                 " no parent)."
             )
 
-        if id(line.leaves[string_idx]) in line.comments and contains_pragma_comment(
-            line.comments[id(line.leaves[string_idx])]
+        if (
+            id(line.leaves[string_idx]) in line.comments
+            and contains_pragma_comment(line.comments[id(line.leaves[string_idx])])
         ):
             return TErr(
                 "Line appears to end with an inline pragma comment. Splitting the line"
@@ -1531,8 +1532,8 @@ class StringSplitter(BaseStringSplitter, CustomSplitMapMixin):
         # contain any f-expressions, but ONLY if the original f-string
         # contains at least one f-expression. Otherwise, we will alter the AST
         # of the program.
-        drop_pointless_f_prefix = ("f" in prefix) and fstring_contains_expr(
-            LL[string_idx].value
+        drop_pointless_f_prefix = (
+            ("f" in prefix) and fstring_contains_expr(LL[string_idx].value)
         )
 
         first_string_line = True

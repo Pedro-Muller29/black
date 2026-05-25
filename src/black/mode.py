@@ -260,6 +260,7 @@ class Preview(Enum):
     pyi_overload_group_blank_lines = auto()
     pyi_blank_line_before_decorated_class = auto()
     hug_comparator = auto()
+    wrap_long_bool_in_parens = auto()
 
 
 UNSTABLE_FEATURES: set[Preview] = {

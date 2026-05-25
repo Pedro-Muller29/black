@@ -234,8 +234,9 @@ class Line:
             or leaf.fmt_pass_converted_first_leaf is None
         ):
             return False
-        return first_leaf_matches is None or first_leaf_matches(
-            leaf.fmt_pass_converted_first_leaf
+        return (
+            first_leaf_matches is None
+            or first_leaf_matches(leaf.fmt_pass_converted_first_leaf)
         )
 
     def contains_standalone_comments(self) -> bool:
@@ -370,8 +371,11 @@ class Line:
         if self.is_import:
             return True
 
-        if closing.opening_bracket is not None and not is_one_sequence_between(
-            closing.opening_bracket, closing, self.leaves
+        if (
+            closing.opening_bracket is not None
+            and not is_one_sequence_between(
+                closing.opening_bracket, closing, self.leaves
+            )
         ):
             return True
 
@@ -441,8 +445,9 @@ class Line:
             if subscript_start.type == syms.subscriptlist:
                 subscript_start = child_towards(subscript_start, leaf)
 
-        return subscript_start is not None and any(
-            n.type in TEST_DESCENDANTS for n in subscript_start.pre_order()
+        return (
+            subscript_start is not None
+            and any(n.type in TEST_DESCENDANTS for n in subscript_start.pre_order())
         )
 
     def enumerate_with_length(
@@ -719,8 +724,9 @@ class EmptyLineTracker:
         if name is None:
             return False
         adjacent = EmptyLineTracker._find_adjacent_decorated(decorated_node)
-        return adjacent is not None and EmptyLineTracker._decorated_node_has_func_named(
-            adjacent, name
+        return (
+            adjacent is not None
+            and EmptyLineTracker._decorated_node_has_func_named(adjacent, name)
         )
 
     @staticmethod
@@ -780,8 +786,9 @@ class EmptyLineTracker:
 
         # Check if the if_stmt's next sibling is a same-name decorated function.
         adjacent = EmptyLineTracker._find_adjacent_decorated(if_stmt)
-        if adjacent is not None and EmptyLineTracker._decorated_node_has_func_named(
-            adjacent, func_name
+        if (
+            adjacent is not None
+            and EmptyLineTracker._decorated_node_has_func_named(adjacent, func_name)
         ):
             return True
 
